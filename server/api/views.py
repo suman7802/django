@@ -1,8 +1,7 @@
 import json
-from django.urls import is_valid_path
+from django.contrib.auth.models import User
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
-from django.views.decorators.csrf import csrf_exempt
 
 from .models import Student
 from .serializers import Student_serializer
@@ -25,7 +24,7 @@ def api_params(request):
     return Response({"response":f"your id is {id_num}"})
 
 
-@csrf_exempt
+
 @api_view(["POST"])
 def api_form(request):   
     serialize_data = Student_serializer(data = request.data)
@@ -48,3 +47,37 @@ def api_data(request):
     students = Student.objects.all()
     serializer_student = Student_serializer(students, many="true")
     return Response(serializer_student.data)
+
+
+# --------------------------------------------------------------------
+
+
+@api_view(['POST'])
+def register(request):
+    data = json.loads(request.body)
+    email = data.get('email', 'no email provided')
+    password = data.get('password', 'no password provided')
+
+    if User.objects.filter(email=email).exists():
+        return Response({"response":"email already exists"})
+    else:
+        user = User(email=email)
+        user.set_password(password)
+        user.save()
+        return Response({"response":"user created successfully"})
+
+
+@api_view(['POST'])
+def login(request):
+    data = json.loads(request.body)
+    email = data.get('email', 'no email provided')
+    password = data.get('password', 'no password provided')
+
+    if User.objects.filter(email=email).exists():
+        user = User.objects.get(email=email)
+        if user.check_password(password):
+            return Response({"response":"login successful"})
+        else:
+            return Response({"response":"wrong password"})
+    else:
+        return Response({"response":"user does not exist"})

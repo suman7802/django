@@ -7,5 +7,8 @@ urlpatterns = [
     path('params/', views.api_params),
     path('post/', views.api_form),
     path('get/<str:id>/', views.api_data_id),
-    path('get/', views.api_data)
+    path('get/', views.api_data),
+
+    path('register/', views.register),
+    path('login/', views.login),
 ]

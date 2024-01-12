@@ -30,6 +30,12 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+EXTERNAL_MIDDLEWARE = [
+]
+
+MIDDLEWARE += EXTERNAL_MIDDLEWARE
+
+
 ROOT_URLCONF = 'cfehome.urls'
 
 TEMPLATES = [
