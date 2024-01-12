@@ -2,6 +2,9 @@ import json
 from django.contrib.auth.models import User
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
+from django.contrib.auth import login, logout
+
+
 
 from .models import Student
 from .serializers import Student_serializer
@@ -48,9 +51,7 @@ def api_data(request):
     serializer_student = Student_serializer(students, many="true")
     return Response(serializer_student.data)
 
-
-# --------------------------------------------------------------------
-
+# -----------------------------------------------------------------
 
 @api_view(['POST'])
 def register(request):
@@ -68,7 +69,7 @@ def register(request):
 
 
 @api_view(['POST'])
-def login(request):
+def user_login(request):
     data = json.loads(request.body)
     email = data.get('email', 'no email provided')
     password = data.get('password', 'no password provided')
@@ -76,8 +77,15 @@ def login(request):
     if User.objects.filter(email=email).exists():
         user = User.objects.get(email=email)
         if user.check_password(password):
+            login(request, user)
             return Response({"response":"login successful"})
         else:
             return Response({"response":"wrong password"})
     else:
         return Response({"response":"user does not exist"})
+    
+    
+@api_view(['GET'])
+def user_logout(request):
+    logout(request)
+    return Response({"response":"logout successful"})    

@@ -10,5 +10,5 @@ urlpatterns = [
     path('get/', views.api_data),
 
     path('register/', views.register),
-    path('login/', views.login),
+    path('login/', views.user_login),
 ]
